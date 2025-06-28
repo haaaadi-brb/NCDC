@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int main() {
+    float a,b,c,x_ext,y_ext;
+
+    // Take user input
+    printf("Enter value of a: ");
+    scanf("%f", &a);
+
+    printf("Enter value of b: ");
+    scanf("%f", &b);
+
+    printf("Enter value of c: ");
+    scanf("%f", &c);
+
+    // Calculate currents using Ohm's Law
+    x_ext=-b/(2*a);
+    y_ext=c-(b^2)/(4*a);
+
+ 
+
+    // Print results
+    printf("\nCalculated Extremen values:\n");
+    printf("x coordinate = %.2f A\n", x_ext);
+    printf("y coordinate = %.2f A\n", y_ext);
+   
+    return 0;
+}
