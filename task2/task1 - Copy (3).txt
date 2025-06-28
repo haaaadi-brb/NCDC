@@ -1,0 +1,72 @@
+.data
+arr: .word 15, 3, 9     # Example array of 3 unsigned integers
+
+.text
+.globl main
+
+main:
+    la t0, arr          # t0 = base address of array
+
+    lw t1, 0(t0)        # t1 = arr[0]
+    lw t2, 4(t0)        # t2 = arr[1]
+    lw t3, 8(t0)        # t3 = arr[2]
+
+    # If t1 > t2, swap
+    bgeu t1, t2, swap_12
+
+skip_12:
+    # If t2 > t3, swap
+    bgeu t2, t3, swap_23
+
+skip_23:
+    # Final check: If t1 > t2, swap
+    bgeu t1, t2, swap_12_final
+
+done:
+    sw t1, 0(t0)
+    sw t2, 4(t0)
+    sw t3, 8(t0)
+
+    # Print array elements
+    li t4, 0              # index = 0
+
+print_loop:
+    li t5, 3              # size = 3
+    bge t4, t5, exit      # if index >= 3, exit
+
+    slli t6, t4, 2        # t6 = offset = index * 4
+    add t6, t0, t6        # t6 = &arr[index]
+    lw a1, 0(t6)          # a1 = arr[index] (allowed register)
+
+    li a0, 1              # syscall code: print integer
+    ecall
+
+    li a0, 11             # syscall code: print char
+    li a1, 32             # space character
+    ecall
+
+    addi t4, t4, 1        # index++
+    j print_loop
+
+# --- Swap blocks ---
+swap_12:
+    mv t6, t1
+    mv t1, t2
+    mv t2, t6
+    j skip_12
+
+swap_23:
+    mv t6, t2
+    mv t2, t3
+    mv t3, t6
+    j skip_23
+
+swap_12_final:
+    mv t6, t1
+    mv t1, t2
+    mv t2, t6
+    j done
+
+exit:
+    li a0, 10             # syscall code: exit
+    ecall

@@ -1,0 +1,38 @@
+.data
+original_str:  .asciiz "apple"      # 5-character string + null terminator
+reversed_str:  .space 6             # space for 5 chars + null terminator
+
+.text
+.globl main
+
+main:
+    la t0, original_str     # t0 = pointer to original string
+    la t1, reversed_str     # t1 = pointer to reversed string
+    li t2, 5                # length of string (5 characters)
+
+    add t3, t0, t2          # t3 = address of last char (not null terminator)
+    addi t3, t3, -1         # t3 = point to original_str[4]
+
+loop:
+    beq t2, zero, done      # if count reaches 0, stop
+
+    lb t4, 0(t3)            # load character from end
+    sb t4, 0(t1)            # store it into reversed_str
+
+    addi t3, t3, -1         # move backward in original string
+    addi t1, t1, 1          # move forward in reversed string
+    addi t2, t2, -1         # decrease counter
+    j loop
+
+done:
+    li t4, 0
+    sb t4, 0(t1)            # null-terminate reversed_str
+
+    # Print reversed string
+    la a1, reversed_str     # address of string to print
+    li a0, 4                # syscall code: print_string
+    ecall
+
+    # Exit program
+    li a0, 10
+    ecall
