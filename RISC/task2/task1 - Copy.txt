@@ -1,0 +1,36 @@
+.data
+lowercase_str:  .asciiz "hello"      # 5 lowercase letters
+uppercase_str:  .space 6             # space for 5 letters + null terminator
+
+.text
+.globl main
+
+main:
+    la t0, lowercase_str     # t0 = input string pointer
+    la t1, uppercase_str     # t1 = output string pointer
+
+    li t2, 0                 # counter = 0
+
+loop:
+    lb t3, 0(t0)             # load byte from input
+    beq t3, zero, done       # if null terminator, end
+
+    addi t3, t3, -32         # convert to uppercase (t3 = t3 - 32)
+    sb t3, 0(t1)             # store result into output
+
+    addi t0, t0, 1           # move to next char in input
+    addi t1, t1, 1           # move to next slot in output
+    j loop
+
+done:
+    li t3, 0
+    sb t3, 0(t1)             # null terminate the output string
+
+    # Print the result
+    la a1, uppercase_str
+    li a0, 4                 # syscall: print string
+    ecall
+
+    # Exit
+    li a0, 10
+    ecall

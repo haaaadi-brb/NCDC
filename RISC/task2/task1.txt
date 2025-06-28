@@ -1,0 +1,44 @@
+.data
+byte_array:   .byte 5, -3, 12, 0, 127      # 5 signed bytes
+              .align 2                    # Ensure word_array is word-aligned
+word_array:   .space 20                   # 5 words = 5 * 4 bytes = 20 bytes
+
+.text
+.globl main
+
+main:
+    la t0, byte_array      # t0 = address of byte_array
+    la t1, word_array      # t1 = address of word_array
+    li t2, 5               # t2 = loop counter (5 elements)
+    li t3, 0               # t3 = index
+
+loop:
+    beq t3, t2, done       # if index == 5, exit
+
+    lb t4, 0(t0)           # load signed byte from byte_array
+    sw t4, 0(t1)           # store it as a word into word_array
+
+    # Print value using syscall
+    mv a1, t4              # move value to a1 for printing
+    li a0, 1               # syscall code for print_int
+    ecall
+
+    # Print space
+    li a0, 11              # syscall code for print_char
+    li a1, 32              # ASCII space
+    ecall
+
+    # Move to next element
+    addi t0, t0, 1         # next byte
+    addi t1, t1, 4         # next word
+    addi t3, t3, 1         # increment index
+    j loop
+
+done:
+    # Print newline for neatness
+    li a0, 11
+    li a1, 10
+    ecall
+
+    li a0, 10              # syscall: exit
+    ecall
