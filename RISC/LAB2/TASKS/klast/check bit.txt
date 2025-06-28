@@ -1,0 +1,31 @@
+.data
+msg_set:   .asciiz "Bit is set.\n"
+msg_clear: .asciiz "Bit is clear.\n"
+
+.text
+.globl main
+
+main:
+    li t0, 0b10101010     # Your number
+    li t1, 1              # Bit position to check (0-based)
+
+    li t2, 1
+    sll t2, t2, t1        # Create mask = 1 << bit_pos
+    and t3, t0, t2        # Check if bit is set
+
+    bnez t3, bit_set
+
+    # Bit is clear
+    li a0, 4
+    la a1, msg_clear
+    ecall
+    j exit
+
+bit_set:
+    li a0, 4
+    la a1, msg_set
+    ecall
+
+exit:
+    li a0, 10
+    ecall
